@@ -16,9 +16,27 @@ Unlike regular macaroons, macaroons that are part of a JWM object have their cav
 ### Creating a JWM
 
 ```python
-am = Macaroon()
-am.add_first_party_caveat()
-jwm = JWM(authorizing_macaroon=am)
+# example taken from pymacaroons
+am = Macaroon(
+    location='http://mybank/',
+    identifier='we used our other secret key',
+    key='this is a different super-secret key; \
+never use the same secret twice'
+)
+m.add_first_party_caveat('account', '3735928559')
+caveat_key = '4; guaranteed random by a fair toss of the dice'
+identifier = 'this was how we remind auth of key/pred'
+m.add_third_party_caveat('http://auth.mybank/', caveat_key, identifier)
+
+discharge = Macaroon(
+    location='http://auth.mybank/',
+    key=caveat_key,
+    identifier=identifier
+)
+discharge.add_first_party_caveat('time', '< 2015-01-01T00:00')
+protected = m.prepare_for_request(discharge)
+
+jwm = JWM(authorizing_macaroon=m, discharge_macaroons=[protected])
 ```
 ### Serialization
 
