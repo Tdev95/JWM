@@ -11,15 +11,11 @@ The header and authorizing macaroon are mandatory, whereas discharge macaroons a
 The format stores all the necessary information to verify and validate a request.
 Unlike regular macaroons, macaroons that are part of a JWM object have their caveats shaped as a key-value pair, similar to JWT claims.
 
-example JWM:
-
 ## Usage
 
 ### Creating a JWM
 
 ```python
-from jwm import JWM, Macaroon
-
 am = Macaroon()
 am.add_first_party_caveat()
 jwm = JWM(authorizing_macaroon=am)
@@ -27,10 +23,13 @@ jwm = JWM(authorizing_macaroon=am)
 ### Serialization
 
 ```python
-am = Macaroon()
-am.serialize()
-
-jwm
+# serialize
+am = Macaroon(location='example.com',
+             identifier='use super_secret_key', key='super_secret_key')
+jwm = JWM(am)
+data = jwm.serialize()
+# ... and deserialize
+jwm2 = JWM.deserialize(data)
 ```
 
 ### Binding Discharge Macaroons
@@ -38,6 +37,8 @@ jwm
 JWM provides two methods of binding macaroons. One can either bind discharge macaroons to an authorizing macaroon before creating the JWM, or bind the discharge macaroon while attaching it to the JWM.
 
 ```python
+# the next two examples are meant to illustrate the concept
+# for working examples, look at the test cases
 am = Macaroon()
 am.add_third_party_caveat()
 dm = Macaroon()
@@ -55,14 +56,15 @@ jwm.attach_and_bind_discharge_macaroon(dm)
 
 ### Verify signatures
 ```python
-jwm = JWM(Macaroon())
-jwm.verify()
+# use the key corresponding to the identifier of the authorizing macaroon
+key = keys[am.identifier]
+jwm.verify(key)
 ```
 
 ## Documentation
 
-[WIP] Still figuring out sphinx, check the docs folder for progress so far
+[WIP] Documentation is present in the code and can be built using Sphinx, readthedocs.io is currently being considered as an option to host the documentation when this repository goes public. Check the docs folder for progress so far
 
 ## References
-- [Macaroon Paper] (http://research.google.com/pubs/pub41892.html)
-- [pymacaroons] (https://github.com/ecordell/pymacaroons)
+- [Macaroon Paper](http://research.google.com/pubs/pub41892.html)
+- [pymacaroons](https://github.com/ecordell/pymacaroons)
