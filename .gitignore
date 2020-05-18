@@ -1,0 +1,10 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# Pipenv related files
+Pipfile
+Pipfile.lock
+
+# Sphinx documentation
+docs/_build/
