@@ -119,6 +119,6 @@ class JWM:
         if(self.discharge_macaroons):
             discharge_macaroons = []
             for dm in self.discharge_macaroons:
-                discharge_macaroons.append(dm.pym)
+                discharge_macaroons.append(dm.to_pymacaroon())
 
-        return v.verify(self.authorizing_macaroon.pym, key, discharge_macaroons=discharge_macaroons)
+        return v.verify(self.authorizing_macaroon.to_pymacaroon(), key, discharge_macaroons=discharge_macaroons)
