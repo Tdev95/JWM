@@ -50,10 +50,13 @@ class JWM:
         :rtype: string
         """
         header = b64encode(str.encode(self.header)).decode()
+        header = header.split('=')[0]  # no padding
+
         payload = ''
         for macaroon in ([self.authorizing_macaroon] + self.discharge_macaroons):
             payload += macaroon.serialize() + ','
         payload = b64encode(('[' + payload[:-1] + ']').encode()).decode()
+        payload = payload.split('=')[0]  # no padding
         # print(f'packet = {header}.{payload}')
         return f'{header}.{payload}'
 
@@ -76,13 +79,13 @@ class JWM:
             raise DeserializationException("Unable to detect header and body")
 
         # process header
-        header = json.loads(b64decode(values[0]).decode())
+        header = json.loads(b64decode(cls._pad(values[0])).decode())
 
         if header["typ"] != "jwm":
             raise DeserializationException('Invalid header')
 
         # process payload
-        payload = json.loads(b64decode(values[1]))
+        payload = json.loads(b64decode(cls._pad(values[1])))
         if isinstance(payload, list) and len(payload) >= 1:
             authorizing_macaroon = Macaroon.deserialize(json.dumps(payload[0]))
             discharge_macaroons = []
@@ -94,6 +97,17 @@ class JWM:
         # build and return JWM object
         return JWM(authorizing_macaroon=authorizing_macaroon,
                    discharge_macaroons=discharge_macaroons)
+
+    @classmethod
+    def _pad(cls, string):
+        pd = len(string) % 4
+        if pd == 3:
+            return string + '=='
+        if pd == 2:
+            return string + '='
+        if pd == 1:
+            raise DeserializationException('Invalid base64 string')
+        return string
 
     def verify(self, key, validate_predicates=False):
         """
