@@ -10,7 +10,7 @@ class TestJWM(unittest.TestCase):
         m = Macaroon(location='example.com',
                      identifier='use super_secret_key', key='super_secret_key')
         jwm = JWM(m)
-        self.assertEqual(jwm.serialize(), 'eyJ0eXAiOiAiandtIn0=.eyJpZGVudGlmaWVyIjogInVzZSBzdXBlcl9zZWNyZXRfa2V5IiwgInNpZ25hdHVyZSI6ICIyY2IwMTkyMzdiODJjNzY1NTcyNGNhZjZiN2JhYjM2YzJmY2YzNDIxNzFjMWEwNWQ5ZDQ5ODk3YzAwZDg5M2YxIiwgImxvY2F0aW9uIjogImV4YW1wbGUuY29tIn0=')
+        self.assertEqual(jwm.serialize(), 'eyJ0eXAiOiAiandtIn0=.W3siaWRlbnRpZmllciI6ICJ1c2Ugc3VwZXJfc2VjcmV0X2tleSIsICJzaWduYXR1cmUiOiAiMmNiMDE5MjM3YjgyYzc2NTU3MjRjYWY2YjdiYWIzNmMyZmNmMzQyMTcxYzFhMDVkOWQ0OTg5N2MwMGQ4OTNmMSIsICJsb2NhdGlvbiI6ICJleGFtcGxlLmNvbSJ9XQ==')
 
     def test_deserialize(self):
         am = Macaroon(location='example.com',

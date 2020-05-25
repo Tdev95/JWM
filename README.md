@@ -5,7 +5,9 @@ JSON Web Macaroons (JWM) aims to be JWT (JSON Web Tokens) for macaroons. It is a
 
 The JWM format is defined as follows:
 
-[header].[authorizing_macaroon].[discharge_macaroon]
+[header].[payload]
+
+where header is {'typ', 'jwm'} and payload is a JSON list of JSON macaroon objects where the first macaroon is the authorizing macaroon and the following macaroons are discharge macaroons.
 
 The header and authorizing macaroon are mandatory, whereas discharge macaroons are optional.
 The format stores all the necessary information to verify and validate a request.

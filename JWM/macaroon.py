@@ -50,8 +50,7 @@ class Macaroon:
 
         :returns: serialized macaroon
         """
-        return b64encode(str.encode(
-            self._pym.serialize(serializer=JsonSerializer()))).decode()
+        return self._pym.serialize(serializer=JsonSerializer())
 
     @classmethod
     def deserialize(cls, encoded_macaroon):
@@ -62,7 +61,7 @@ class Macaroon:
         :rtype: Macaroon
         """
         m = PyMacaroon.deserialize(
-            b64decode(str.encode(encoded_macaroon)).decode(), serializer=JsonSerializer())
+            encoded_macaroon, serializer=JsonSerializer())
         return Macaroon(location=m.location, identifier=m.identifier, signature=m.signature)
 
     # PyMacaroon compatibility
