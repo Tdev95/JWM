@@ -1,6 +1,5 @@
 from pymacaroons import Macaroon as PyMacaroon
 from pymacaroons.serializers import JsonSerializer
-from base64 import b64encode, b64decode
 
 
 class Macaroon:

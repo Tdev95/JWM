@@ -8,3 +8,8 @@ Pipfile.lock
 
 # Sphinx documentation
 docs/_build/
+
+# distribution/packaging
+build/
+dist/
+*.egg-info
