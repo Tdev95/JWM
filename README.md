@@ -5,11 +5,20 @@ JSON Web Macaroons (JWM) aims to be JWT (JSON Web Tokens) for macaroons. It is a
 
 The JWM format is defined as follows:
 
-[header].[authorizing_macaroon].[discharge_macaroon]
+[header].[payload]
+
+where header is {'typ', 'jwm'} and payload is a JSON list of JSON macaroon objects where the first macaroon is the authorizing macaroon and the following macaroons are discharge macaroons.
 
 The header and authorizing macaroon are mandatory, whereas discharge macaroons are optional.
 The format stores all the necessary information to verify and validate a request.
 Unlike regular macaroons, macaroons that are part of a JWM object have their caveats shaped as a key-value pair, similar to JWT claims.
+
+## Installation
+
+Because the repository is currently still private, installation through the python package index is not possible. Therefore temporarily installation has to be done manually using the wheel (.whl) file.
+```
+pip install JWM-1.0-py3-none-any.whl
+```
 
 ## Usage
 

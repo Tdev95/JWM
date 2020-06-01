@@ -3,11 +3,11 @@ from base64 import b64encode, b64decode
 import json
 
 from JWM.macaroon import Macaroon
-from JWM.exceptions import InvalidHeaderException, MissingBodyException
+from JWM.exceptions import DeserializationException
 
 
 class JWM:
-    """ JSON Web Macaroons format"""
+    """JSON Web Macaroons format"""
 
     def __init__(self, authorizing_macaroon, discharge_macaroons=None):
         """
@@ -49,10 +49,16 @@ class JWM:
         :returns: serialized JWM
         :rtype: string
         """
-        ser = b64encode(str.encode(self.header)).decode()
+        header = b64encode(str.encode(self.header)).decode()
+        header = header.split('=')[0]  # no padding
+
+        payload = ''
         for macaroon in ([self.authorizing_macaroon] + self.discharge_macaroons):
-            ser += f'.{macaroon.serialize()}'
-        return ser
+            payload += macaroon.serialize() + ','
+        payload = b64encode(('[' + payload[:-1] + ']').encode()).decode()
+        payload = payload.split('=')[0]  # no padding
+        # print(f'packet = {header}.{payload}')
+        return f'{header}.{payload}'
 
     @classmethod
     def deserialize(cls, string):
@@ -64,29 +70,44 @@ class JWM:
         :returns: new JWM object
         :rtype: JWM
 
-        :raises: MissingBodyException, InvalidHeaderException
+        :raises: DeserializationException
         """
         # decode JWM
         values = string.split('.')
 
-        if len(values) < 2:
-            raise MissingBodyException("No body found")
+        if len(values) != 2:
+            raise DeserializationException("Unable to detect header and body")
 
         # process header
-        header = json.loads(b64decode(values[0]).decode())
+        header = json.loads(b64decode(cls._pad(values[0])).decode())
 
         if header["typ"] != "jwm":
-            raise InvalidHeaderException('No JWM header')
+            raise DeserializationException('Invalid header')
 
-        # process body
-        authorizing_macaroon = Macaroon.deserialize(values[1])
-        discharge_macaroons = []
-        for encoded_macaroon in values[2:]:
-            discharge_macaroons.append(Macaroon.deserialize(encoded_macaroon))
+        # process payload
+        payload = json.loads(b64decode(cls._pad(values[1])))
+        if isinstance(payload, list) and len(payload) >= 1:
+            authorizing_macaroon = Macaroon.deserialize(json.dumps(payload[0]))
+            discharge_macaroons = []
+            for macaroon in payload[1:]:
+                discharge_macaroons.append(Macaroon.deserialize(json.dumps(macaroon)))
+        else:
+            raise DeserializationException('Invalid payload')
 
         # build and return JWM object
         return JWM(authorizing_macaroon=authorizing_macaroon,
                    discharge_macaroons=discharge_macaroons)
+
+    @classmethod
+    def _pad(cls, string):
+        pd = len(string) % 4
+        if pd == 3:
+            return string + '='
+        if pd == 2:
+            return string + '=='
+        if pd == 1:
+            raise DeserializationException('Invalid base64 string')
+        return string
 
     def verify(self, key, validate_predicates=False):
         """
@@ -119,6 +140,6 @@ class JWM:
         if(self.discharge_macaroons):
             discharge_macaroons = []
             for dm in self.discharge_macaroons:
-                discharge_macaroons.append(dm.pym)
+                discharge_macaroons.append(dm.to_pymacaroon())
 
-        return v.verify(self.authorizing_macaroon.pym, key, discharge_macaroons=discharge_macaroons)
+        return v.verify(self.authorizing_macaroon.to_pymacaroon(), key, discharge_macaroons=discharge_macaroons)
