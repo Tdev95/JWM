@@ -19,7 +19,7 @@ class Macaroon:
         :param key: Caveat key
         :param value: Value corresponding to key
         """
-        self._pym.add_first_party_caveat(f'{key}:{value}')
+        self._pym.add_first_party_caveat(f'{{"{key}":"{value}"}}')
 
     def add_third_party_caveat(self, location, caveat_key, identifier):
         """

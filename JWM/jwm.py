@@ -102,9 +102,9 @@ class JWM:
     def _pad(cls, string):
         pd = len(string) % 4
         if pd == 3:
-            return string + '=='
-        if pd == 2:
             return string + '='
+        if pd == 2:
+            return string + '=='
         if pd == 1:
             raise DeserializationException('Invalid base64 string')
         return string
