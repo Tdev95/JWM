@@ -6,10 +6,12 @@
 Welcome to JWM's documentation!
 ===============================
 
-JSON Web Macaroons (JWM) aims to be JWT (JSON Web Tokens) for macaroons. It is a bearer token in the sense that it has a signature that can be verified and it contains claims, but because it is implemented as a macaroon it allows for all the awesome features associated with macaroons. JWM is implemented on top of PyMacaroons.
+JSON Web Macaroons (JWM) aims to be JWT (JSON Web Tokens) for macaroons. It is a bearer token that has a signature that can be verified and it contains claims, but because it is implemented using macaroons it allows for all the awesome features associated with macaroons. JWM is implemented on top of PyMacaroons.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 4
 
    jwm
+   verifier
    macaroon
+   caveat

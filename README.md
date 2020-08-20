@@ -1,7 +1,7 @@
 # JSON Web Macaroons (JWM)
 
 ## What are JSON Web Macaroons?
-JSON Web Macaroons (JWM) aims to be JWT (JSON Web Tokens) for macaroons. It is a bearer token in the sense that it has a signature that can be verified and it contains claims, but because it is implemented as a macaroon it allows for all the awesome features associated with macaroons. JWM is implemented on top of PyMacaroons.
+JSON Web Macaroons (JWM) aims to be JWT (JSON Web Tokens) for macaroons. It is a bearer token that has a signature that can be verified and it contains claims, but because it is implemented as a macaroon it allows for all the awesome features associated with macaroons. JWM is implemented on top of PyMacaroons.
 
 The JWM format is defined as follows:
 
@@ -64,7 +64,7 @@ jwm2 = JWM.deserialize(data)
 JWM provides two methods of binding macaroons. One can either bind discharge macaroons to an authorizing macaroon before creating the JWM, or bind the discharge macaroon while attaching it to the JWM.
 
 ```python
-# the next two examples are meant to illustrate the concept
+# the next examples are meant to illustrate the concepts
 # for working examples, look at the test cases
 am = Macaroon()
 am.add_third_party_caveat()
@@ -81,11 +81,11 @@ dm = Macaroon()
 jwm.attach_and_bind_discharge_macaroon(dm)
 ```
 
-### Verify signatures
+### Verify signatures and Validate claims
 ```python
 # use the key corresponding to the identifier of the authorizing macaroon
-key = keys[am.identifier]
-jwm.verify(key)
+v = Verifier()
+verified = v.verify(jwm, key)
 ```
 
 ## Documentation

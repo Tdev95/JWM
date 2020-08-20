@@ -3,7 +3,11 @@ from JWM import Macaroon
 
 
 class TestMacaroon(unittest.TestCase):
-    def test_caveats(self):
+    def test_macaroon(self):
+        """
+        create a macaroon and
+        attach some caveats
+        """
         am = Macaroon(location='example.com',
                       identifier='use super_secret_key', key='super_secret_key')
         am.add_first_party_caveat('key', 'value')
@@ -11,5 +15,3 @@ class TestMacaroon(unittest.TestCase):
         caveat_key = '4; guaranteed random by a fair toss of the dice'
         identifier = 'this was how we remind auth of key/pred'
         am.add_third_party_caveat('http://auth.mybank/', caveat_key, identifier)
-        for caveat in am.caveats:
-            print(caveat.to_dict())
