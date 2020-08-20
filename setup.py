@@ -16,6 +16,6 @@ setup(
         'Topic :: Security :: Cryptography',
         'Topic :: Security'
     ],
-    install_requires=['pymacaroons'],
+    install_requires=['pymacaroons==0.13.0'],
     python_requires='>=3.6'
 )

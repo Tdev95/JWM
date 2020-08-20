@@ -1,4 +1,3 @@
-from pymacaroons import Verifier
 from base64 import b64encode, b64decode
 import json
 
@@ -108,38 +107,3 @@ class JWM:
         if pd == 1:
             raise DeserializationException('Invalid base64 string')
         return string
-
-    def verify(self, key, validate_predicates=False):
-        """
-        Verify the signature of a JWM using the discharge macaroons
-
-        :param key: Key correspoding to the authorizing macaroon identifier
-        :type key: string
-        :param validate_predicates: Validate whether first party predicates are key value predicates
-        :type validate_predicates: bool
-        """
-
-        # create Verifier
-        v = Verifier()
-
-        # validator that checks for key:value shape of predicates
-        def kvp_validator(predicate):
-            return len(predicate.split(':')) == 2
-
-        # validator that only check hashes, ignore predicates
-        def true_validator(predicate):
-            return True
-
-        if(validate_predicates):
-            v.satisfy_general(kvp_validator)
-        else:
-            v.satisfy_general(true_validator)
-
-        # get pymacaroon representation of discharge macaroons for verification
-        discharge_macaroons = None
-        if(self.discharge_macaroons):
-            discharge_macaroons = []
-            for dm in self.discharge_macaroons:
-                discharge_macaroons.append(dm.to_pymacaroon())
-
-        return v.verify(self.authorizing_macaroon.to_pymacaroon(), key, discharge_macaroons=discharge_macaroons)

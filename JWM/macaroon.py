@@ -1,5 +1,6 @@
 from pymacaroons import Macaroon as PyMacaroon
 from pymacaroons.serializers import JsonSerializer
+from JWM.caveat import Caveat
 
 
 class Macaroon:
@@ -19,7 +20,7 @@ class Macaroon:
         :param key: Caveat key
         :param value: Value corresponding to key
         """
-        self._pym.add_first_party_caveat(f'{{"{key}":"{value}"}}')
+        self._pym.add_first_party_caveat(f'{{"{key}": "{value}"}}')
 
     def add_third_party_caveat(self, location, caveat_key, identifier):
         """
@@ -75,11 +76,11 @@ class Macaroon:
         return self._pym
 
     # Properties
-    """
-    Inspect the state of the Macaroon (used for debugging)
-    """
 
     def inspect(self):
+        """
+        Inspect the state of the Macaroon (used for debugging)
+        """
         return self._pym.inspect()
 
     @property
@@ -92,4 +93,9 @@ class Macaroon:
 
     @property
     def caveats(self):
-        return self._pym.caveats
+        caveats = []
+        for caveat in self._pym.caveats:
+            caveats.append(Caveat(caveat.caveat_id,
+                                  verification_key_id=caveat.verification_key_id,
+                                  location=caveat.location))
+        return caveats
