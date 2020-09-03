@@ -14,8 +14,8 @@ The format stores all the necessary information to verify and validate a request
 Unlike regular macaroons, macaroons that are part of a JWM object have their caveats shaped as a key-value pair, similar to JWT claims.
 
 ## Installation
+For now, installation is possible using the wheel (.whl) file. JWM may be uploaded to the python package index in the future.
 
-Because the repository is currently still private, installation through the python package index is not possible. Therefore temporarily installation has to be done manually using the wheel (.whl) file.
 ```
 pip install JWM-1.0-py3-none-any.whl
 ```
